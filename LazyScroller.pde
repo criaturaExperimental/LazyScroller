@@ -1,3 +1,5 @@
+// Imports
+
 import gab.opencv.*;
 import processing.video.*;
 
@@ -36,24 +38,24 @@ int rup = 40;
 void setup() {
 
   size(480, 360);
-  stroke(255, 255, 255); 
-  strokeWeight(5); 
+  stroke(255, 255, 255);
+  strokeWeight(5);
   noFill();
 
   opencv = new OpenCV(this, 640, 480);
   opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
 
   textSize(32);
-  
+
   lastTime = millis();
 
   video = new Capture(this, 640, 480);
   video.start();
-  
-  try { 
+
+  try {
     robot = new Robot();
     robot.setAutoDelay(0);
-  } 
+  }
   catch (Exception e) {
     e.printStackTrace();
   }
@@ -63,28 +65,28 @@ void draw() {
 
   if (video.available() == true) {
     video.read();
-  }  
+  }
   image(video, 0, 0, 480, 360);
 
   opencv.loadImage(video);
   opencv.useColor(HSB);
-  
+
   faces = opencv.detect(DETECT_SCALE, DETECT_MINNEIGHBOURS, 0, DETECT_MINSIZE, DETECT_MAXSIZE);
-  
+
   ellipse(400, 200, rup, rup);
   ellipse(80, 200, rstop, rstop);
-  
+
   scale(0.75);
-  
+
   opencv.setGray(opencv.getH());
 
   opencv.inRange(18, 22);
   contours = opencv.findContours(true, true);
-  
-  
+
+
   for (int i = 0; i < faces.length; i++) {
     rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height);
-    
+
     if(stopme == false){
       scroll_down();
     }
@@ -100,13 +102,14 @@ void draw() {
         stopme = true;
         scroll_up();
       }
-      if (contours.get(f).containsPoint(int(80/0.75), int(200/0.75)) || 
+      if (contours.get(f).containsPoint(int(80/0.75), int(200/0.75)) ||
           contours.get(f).containsPoint(int(85/0.75), int(200/0.75)) ||
           contours.get(f).containsPoint(int(75/0.75), int(200/0.75)) ||
           contours.get(f).containsPoint(int(80/0.75), int(195/0.75)) ||
           contours.get(f).containsPoint(int(85/0.75), int(195/0.75)) ||
           contours.get(f).containsPoint(int(75/0.75), int(195/0.75))) {
         halt();
+        stopme = true;
       }
     }
   }
